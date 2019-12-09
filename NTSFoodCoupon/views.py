@@ -11,7 +11,7 @@ def menu_list(request):
     if request.method == 'GET':
         data = {
           "Starters" : "Babycorn Chillie",
-          "Main Course": "Chicken Curry",
+          "MainCourse": "Chicken Curry",
           "Dessert" : "Gulab Jamun"
         }
         return JsonResponse(data)
