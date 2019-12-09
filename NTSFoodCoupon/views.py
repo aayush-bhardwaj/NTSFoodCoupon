@@ -10,9 +10,8 @@ def menu_list(request):
     print("Hello")
     if request.method == 'GET':
         data = {
-            'name': 'Vitor',
-            'location': 'Finland',
-            'is_active': True,
-            'count': 28
+          "Starters" : "Babycorn Chillie",
+          "Main Course": "Chicken Curry",
+          "Dessert" : "Gulab Jamun"
         }
         return JsonResponse(data)
