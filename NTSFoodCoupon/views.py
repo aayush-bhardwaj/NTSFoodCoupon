@@ -113,7 +113,7 @@ def feedback(request):
         hygiene = body[1].split("=")[1]
         staffBehaviour = body[2].split("=")[1]
         feedback = body[3].split("=")[1]
-        meal = body[3].split("=")[1]
+        meal = body[4].split("=")[1]
         emp_id = "225623"
         now = datetime.datetime.now()
         user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
@@ -125,3 +125,32 @@ def feedback(request):
         data["rating"][meal]["StaffBehaviour"] = int(staffBehaviour)
         put_item(table, data)
         return
+
+
+@csrf_exempt
+def cancel(request):
+    """
+    Feedback for a user and date
+
+    :param request:
+    :return:
+    """
+    table = "NTSUser"
+    if request.method == 'POST':
+        body = str(request.body).split("&")
+        date = body[0].split("=")[1].split("/")
+        meals = str(body[1].split("=")[1]).split(",")
+        month = date[0]
+        day = date[1]
+        emp_id = "225623"
+        now = datetime.datetime.now()
+        if str(day) == str(now.day):
+            return JsonResponse({"response": "You cannot cancel today's meal."})
+        user_string = emp_id + "_" + str(month) + "-" + str(day) + "-" + str(now.year)
+        put_key = {"user_string": user_string}
+        data = get_item("NTSUser", put_key)
+        for meal in meals:
+            if data["tokens"][meal] == 1:
+                data["tokens"][meal] = 4
+        put_item(table, data)
+        return JsonResponse({"response": "Your meal has been cancelled."})
