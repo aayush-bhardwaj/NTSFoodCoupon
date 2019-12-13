@@ -1,0 +1,16 @@
+{
+  "MealTime": {
+    "Breakfast": {
+      "start": 7,
+      "end": 11
+    },
+    "Lunch": {
+      "start": 12,
+      "end": 16
+    },
+    "Dinner": {
+      "start": 19,
+      "end": 23
+    }
+  }
+}
