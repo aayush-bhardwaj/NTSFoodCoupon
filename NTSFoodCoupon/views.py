@@ -83,17 +83,16 @@ def token_list(request):
         if coupon_option == "":
             return JsonResponse({"response":"You don't have any active coupon."})
         else:
-            response = {"coupon": coupon_option}
+            response = {"response": coupon_option}
             return JsonResponse(response)
 
     if request.method == 'POST':
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = str(request.body)
         emp_id = "225623"
         now = datetime.datetime.now()
         user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
-        data["tokens"][body["coupon"]] = 2
+        data["tokens"][body] = 2
         put_item(table, data)
-        return JsonResponse({"response": "Enjoy your %s." %body["coupon"]})
+        return JsonResponse({"response": "Enjoy your %s." %body})
