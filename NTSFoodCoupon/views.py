@@ -119,9 +119,9 @@ def feedback(request):
         user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
-        data["rating"][meal]["Feedback"] = feedback
-        data["rating"][meal]["FoodQuality"] = foodQuality
-        data["rating"][meal]["Hygiene"] = hygiene
-        data["rating"][meal]["StaffBehaviour"] = staffBehaviour
+        data["rating"][meal]["Feedback"] = str(feedback)
+        data["rating"][meal]["FoodQuality"] = int(foodQuality)
+        data["rating"][meal]["Hygiene"] = int(hygiene)
+        data["rating"][meal]["StaffBehaviour"] = int(staffBehaviour)
         put_item(table, data)
         return
