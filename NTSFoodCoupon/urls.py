@@ -8,4 +8,5 @@ app_name = 'NTSFoodCoupon'
 urlpatterns = [
     url('menu', views.menu_list, name='menu_list'),
     url('token', views.token_list, name='token_list'),
+    url('token/feedback', views.feedback, name='feedback'),
 ]
