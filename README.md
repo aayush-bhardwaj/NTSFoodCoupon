@@ -11,3 +11,4 @@
 
 `sudo apt-get install mysql-client`
 
+`pip install boto3`
