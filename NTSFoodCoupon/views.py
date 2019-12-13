@@ -3,12 +3,22 @@ from __future__ import unicode_literals
 
 from django.http import JsonResponse
 from dynamoDB import get_item,put_item
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 import json
 
 
 # with open('NTSFoodCouponconfig.json') as f:
 #   MealTime = json.load(f)
+
+"""
+STATUS CODES:
+0 = INACTIVE
+1 = ACTIVE
+2 = USED
+3 = NO SHOW
+4 = CANCELLED
+"""
 
 MealTime = {
   "MealTime": {
@@ -42,7 +52,10 @@ def menu_list(request):
         get_key = {'Day': day}
         data = get_item(table, get_key)
         return JsonResponse(data)
+    if request.method == 'POST':
+	return JsonResponse({"a":"b"})
 
+@csrf_exempt 
 def token_list(request):
     """
     Token for a user and date
@@ -68,7 +81,19 @@ def token_list(request):
                 coupon_option = "Dinner"
 
         if coupon_option == "":
-            return JsonResponse("You don't have any active coupon.")
+            return JsonResponse({"response":"You don't have any active coupon."})
         else:
             response = {"coupon": coupon_option}
             return JsonResponse(response)
+
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        emp_id = "225623"
+        now = datetime.datetime.now()
+        user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
+        put_key = {"user_string": user_string}
+        data = get_item("NTSUser", put_key)
+        data["tokens"][body["coupon"]] = 2
+        put_item(table, data)
+        return JsonResponse({"response": "Enjoy your %s." %body["coupon"]})
