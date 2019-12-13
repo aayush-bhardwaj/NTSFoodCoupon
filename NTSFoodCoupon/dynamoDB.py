@@ -1,8 +1,8 @@
 import boto3
 import json
 
-ACCESS_KEY = "AKIAUOKXMQ67BXK2MEM3"
-SECRET_KEY = "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"
+ACCESS_KEY = ""
+SECRET_KEY = ""
 dynamo = boto3.resource('dynamodb',aws_access_key_id=ACCESS_KEY,
                       aws_secret_access_key=SECRET_KEY,
                       region_name="us-east-1")
