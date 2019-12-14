@@ -192,7 +192,12 @@ def add(request):
         body = request.body.split("&")
         employeeID = body[0].split("=")[1]
         meals = body[1].split("=")[1].split(",")
-        get_key = {"emp_id": employeeID}
+        date = body[2].split("/")
+        day = date[0]
+        month = date[1]
+        year = date[2]
+        user_string = employeeID + "_" + month + "-" + day + "-" + year
+        get_key = {"user_string": user_string}
         data = get_item(table, get_key)
         for meal in meals:
             data[meal] = 1
