@@ -45,6 +45,9 @@ shiftCoupon = {
 
 # Create your views here.
 
+# As we could not implement Authorisation due to time constraint we have hard coded emp_id
+EMP_ID = "225623"
+
 def menu_list(request):
     """
     Get Menu List for NTSFoodCoupon
@@ -74,7 +77,8 @@ def token_list(request):
         now = datetime.datetime.now()
         present_hour = now.hour
         coupon_option = ""
-        get_key = {'user_string': '225623_12-14-2019'}
+        user_string = EMP_ID + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
+        get_key = {'user_string': user_string}
         data = get_item(table, get_key)
         if present_hour >= MealTime.get("MealTime").get("Breakfast").get("start") and present_hour < MealTime.get("MealTime").get("Breakfast").get("end"):
             if data["Breakfast"] == 1:
@@ -94,9 +98,8 @@ def token_list(request):
 
     if request.method == 'POST':
         body = str(request.body)
-        emp_id = "225623"
         now = datetime.datetime.now()
-        user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
+        user_string = EMP_ID + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
         data[body] = 2
@@ -120,9 +123,8 @@ def feedback(request):
         staffBehaviour = body[2].split("=")[1]
         feedback = body[3].split("=")[1]
         meal = body[4].split("=")[1]
-        emp_id = "225623"
         now = datetime.datetime.now()
-        user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
+        user_string = EMP_ID + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
         data["rating"][meal]["Feedback"] = str(feedback)
@@ -148,11 +150,10 @@ def cancel(request):
         meals = str(body[1].split("=")[1]).split(",")
         month = date[1]
         day = date[0]
-        emp_id = "225623"
         now = datetime.datetime.now()
         if str(day) == str(now.day):
             return JsonResponse({"response": "You cannot cancel today's meal."})
-        user_string = emp_id + "_" + str(month) + "-" + str(day) + "-" + str(now.year)
+        user_string = EMP_ID + "_" + str(month) + "-" + str(day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
         for meal in meals:
@@ -226,7 +227,7 @@ def provision(request):
         year = body[1].split("=")[1]
         days = []
         cal = calendar.Calendar()
-        for x in cal.itermonthdays2(year, month):
+        for x in cal.itermonthdays2(int(year), int(month)):
             if x[0] != 0 and x[1] < 5:
                 days.append(x[0])
 

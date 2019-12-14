@@ -1,19 +1,22 @@
 import boto3
 import json
+from os import environ
 
-ACCESS_KEY = ""
-SECRET_KEY = ""
+ACCESS_KEY = environ.get("ACCESS_KEY")
+SECRET_KEY = environ.get("SECRET_KEY")
 dynamo = boto3.resource('dynamodb',aws_access_key_id=ACCESS_KEY,
                       aws_secret_access_key=SECRET_KEY,
                       region_name="us-east-1")
 
 
 def get_all_items(table):
+    try:
+        table = dynamo.Table(table)
 
-    table = dynamo.Table(table)
-
-    response = table.scan()
-    return response["Items"]
+        response = table.scan()
+        return response["Items"]
+    except Exception as error:
+        print ("Exception in fetching all items from DynamoDB.")
 
 def get_item(table, key):
     try:
@@ -28,11 +31,14 @@ def get_item(table, key):
     return item
 
 def put_item(table, key):
-    table = dynamo.Table(table)
+    try:
+        table = dynamo.Table(table)
 
-    table.put_item(
-        Item=key
-    )
+        table.put_item(
+            Item=key
+        )
+    except Exception as error:
+        print ("Failed to put item in DynamoDB.")
 
 """
 # Test NTSFoodCoupon
