@@ -154,3 +154,27 @@ def cancel(request):
                 data[meal] = 4
         put_item(table, data)
         return JsonResponse({"response": "Your meal has been cancelled."})
+
+@csrf_exempt
+def guest(request):
+    """
+    Feedback for a user and date
+
+    :param request:
+    :return:
+    """
+    table = "NTSGuest"
+    if request.method == 'POST':
+        meals = str(request.body).split("=")[-1].split(",")
+        now = datetime.datetime.now()
+        date = str(now.day) + "-" + str(now.month) + "-" + str(now.year)
+        get_key = {"date": date}
+        data = get_item(table, get_key)
+        if data == -1:
+            put_key = {"date": date, "Breakfst" : 0, "Lunch": 0, "Dinner": 0}
+            put_item(table, put_key)
+        else:
+            for meal in meals:
+                data[meal] = 2
+        put_item(table, data)
+        return JsonResponse({"response": "Guest has been added meals %s" % str(meals)})
