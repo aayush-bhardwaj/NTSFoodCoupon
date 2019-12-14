@@ -174,7 +174,7 @@ def guest(request):
         meals = str(request.body).split("=")[-1].split(",")
         now = datetime.datetime.now()
         date = str(now.day) + "-" + str(now.month) + "-" + str(now.year)
-        get_key = {"date": date}
+        get_key = {"Date": date}
         data = get_item(table, get_key)
         if data == -1:
             put_key = {"date": date, "Breakfast" : 0, "Lunch": 0, "Dinner": 0}
@@ -183,7 +183,7 @@ def guest(request):
             for meal in meals:
                 data[meal] = data[meal] + 1
         put_item(table, data)
-        return JsonResponse({"response": "Guest has been added meals %s" % str(meals)})
+        return JsonResponse({"response": "Guest has been added meals."})
 
 @csrf_exempt
 def add(request):
