@@ -68,7 +68,7 @@ def token_list(request):
         now = datetime.datetime.now()
         present_hour = now.hour
         coupon_option = ""
-        get_key = {'user_string': '225623_12-13-2019'}
+        get_key = {'user_string': '225623_12-14-2019'}
         data = get_item(table, get_key)
         if present_hour >= MealTime.get("MealTime").get("Breakfast").get("start") and present_hour < MealTime.get("MealTime").get("Breakfast").get("end"):
             if data["Breakfast"] == 1:
@@ -140,8 +140,8 @@ def cancel(request):
         body = str(request.body).split("&")
         date = body[0].split("=")[1].split("/")
         meals = str(body[1].split("=")[1]).split(",")
-        month = date[0]
-        day = date[1]
+        month = date[1]
+        day = date[0]
         emp_id = "225623"
         now = datetime.datetime.now()
         if str(day) == str(now.day):
@@ -163,7 +163,7 @@ def guest(request):
     :param request:
     :return:
     """
-    table = "NTSGuest"
+    table = "NTSguest"
     if request.method == 'POST':
         meals = str(request.body).split("=")[-1].split(",")
         now = datetime.datetime.now()
@@ -178,3 +178,23 @@ def guest(request):
                 data[meal] = data[meal] + 1
         put_item(table, data)
         return JsonResponse({"response": "Guest has been added meals %s" % str(meals)})
+
+@csrf_exempt
+def add(request):
+    """
+    Feedback for a user and date
+
+    :param request:
+    :return:
+    """
+    table = "NTSUser"
+    if request.method == 'POST':
+        body = request.body.split("&")
+        employeeID = body[0].split("=")[1]
+        meals = body[1].split("=")[1].split(",")
+        get_key = {"emp_id": employeeID}
+        data = get_item(table, get_key)
+        for meal in meals:
+            data[meal] = 1
+        put_item(table, data)
+        return JsonResponse({"response": "Added meals for User."})

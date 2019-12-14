@@ -11,4 +11,5 @@ urlpatterns = [
     url('feedback', views.feedback, name='feedback'),
     url('cancel', views.cancel, name='cancel'),
     url('guest', views.guest, name='guest'),
+    url('add', views.guest, name='add'),
 ]
