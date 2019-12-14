@@ -71,13 +71,13 @@ def token_list(request):
         get_key = {'user_string': '225623_12-13-2019'}
         data = get_item(table, get_key)
         if present_hour >= MealTime.get("MealTime").get("Breakfast").get("start") and present_hour < MealTime.get("MealTime").get("Breakfast").get("end"):
-            if data["tokens"]["Breakfast"] == 1:
+            if data["Breakfast"] == 1:
                 coupon_option = "Breakfast"
         elif present_hour >= MealTime.get("MealTime").get("Lunch").get("start") and present_hour < MealTime.get("MealTime").get("Lunch").get("end"):
-            if data["tokens"]["Lunch"] == 1:
+            if data["Lunch"] == 1:
                 coupon_option = "Lunch"
         elif present_hour >= MealTime.get("MealTime").get("Dinner").get("start") and present_hour < MealTime.get("MealTime").get("Dinner").get("end"):
-            if data["tokens"]["Dinner"] == 1:
+            if data["Dinner"] == 1:
                 coupon_option = "Dinner"
 
         if coupon_option == "":
@@ -93,7 +93,7 @@ def token_list(request):
         user_string = emp_id + "_" + str(now.month) + "-" + str(now.day) + "-" + str(now.year)
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
-        data["tokens"][body] = 2
+        data[body] = 2
         put_item(table, data)
         return JsonResponse({"response": "Enjoy your %s." %body})
 
@@ -124,7 +124,7 @@ def feedback(request):
         data["rating"][meal]["Hygiene"] = int(hygiene)
         data["rating"][meal]["StaffBehaviour"] = int(staffBehaviour)
         put_item(table, data)
-        return
+        return JsonResponse({"response": "Your Feedback has been submitted."})
 
 
 @csrf_exempt
@@ -150,7 +150,7 @@ def cancel(request):
         put_key = {"user_string": user_string}
         data = get_item("NTSUser", put_key)
         for meal in meals:
-            if data["tokens"][meal] == 1:
-                data["tokens"][meal] = 4
+            if data[meal] == 1:
+                data[meal] = 4
         put_item(table, data)
         return JsonResponse({"response": "Your meal has been cancelled."})
