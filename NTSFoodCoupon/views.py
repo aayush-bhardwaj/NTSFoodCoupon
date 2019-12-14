@@ -254,6 +254,6 @@ def provision(request):
                         "Dinner": {"Hygiene": -1, "FoodQuality": -1, "StaffBehaviour": -1, "Feedback": "0",
                                    "average": 0}}}
                 put_item(tableUser, put_key)
-                return
+                return JsonResponse({"response": "Coupons have been assigned."})
 
 
