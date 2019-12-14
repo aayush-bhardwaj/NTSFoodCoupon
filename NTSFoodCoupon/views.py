@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 
 from django.http import JsonResponse
-from dynamoDB import get_item,put_item
+from dynamoDB import get_item,put_item, get_all_items
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+import calendar
 import json
 
 
@@ -35,6 +36,11 @@ MealTime = {
       "end": 23
     }
   }
+}
+
+shiftCoupon = {
+    "nts-shift-5": ["Dinner"],
+    "nts-shift-6": ["Dinner", "Breakfast"]
 }
 
 # Create your views here.
@@ -203,3 +209,51 @@ def add(request):
             data[meal] = 1
         put_item(table, data)
         return JsonResponse({"response": "Added meals for User."})
+
+@csrf_exempt
+def provision(request):
+    """
+    Feedback for a user and date
+
+    :param request:
+    :return:
+    """
+    tableUserList = "NTSUserList"
+    tableUser = "NTSUser"
+    if request.method == 'POST':
+        body = request.body.split("&")
+        month = body[0].split("=")[1]
+        year = body[1].split("=")[1]
+        days = []
+        cal = calendar.Calendar()
+        for x in cal.itermonthdays2(year, month):
+            if x[0] != 0 and x[1] < 5:
+                days.append(x[0])
+
+        user_list = get_all_items(tableUserList)
+        for user in user_list:
+            for day in days:
+                token_date = str(month) + "-" + str(day) + "-" + str(year)
+                user_string = user["emp_id"] + "_" + token_date
+                breakfast = 0
+                lunch = 0
+                dinner = 0
+                if "Breakfast" in shiftCoupon[user["shift"]]:
+                    breakfast = 1
+                if "Lunch" in shiftCoupon[user["shift"]]:
+                    lunch = 1
+                if "Dinner" in shiftCoupon[user["shift"]]:
+                    dinner = 1
+
+                put_key = {"username": user["email"], "emp_id": user["emp_id"], "date": token_date,
+                           "user_string": user_string, "Breakfast": breakfast, "Lunch": lunch, "Dinner": dinner, "rating": {
+                        "Breakfast": {"Hygiene": -1, "FoodQuality": -1, "StaffBehaviour": -1, "average": 0,
+                                      "Feedback": "0"},
+                        "Lunch": {"Hygiene": -1, "FoodQuality": -1, "StaffBehaviour": -1, "Feedback": "0",
+                                  "average": 0},
+                        "Dinner": {"Hygiene": -1, "FoodQuality": -1, "StaffBehaviour": -1, "Feedback": "0",
+                                   "average": 0}}}
+                put_item(tableUser, put_key)
+                return
+
+
